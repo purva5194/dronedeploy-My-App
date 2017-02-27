@@ -1,25 +1,30 @@
 function onClickHandler(){
 	var api;
+	//communicating with DroneDeploy using api.
 	new DroneDeploy({ version: 1})
         .then(function(dronedeployApi) {
-		  console.log('DroneDeploy Api: ', dronedeployApi);
+		  //console.log('DroneDeploy Api: ', dronedeployApi);
 		  api = dronedeployApi;
+		  //return the plan that is currently viewed by user.
           return dronedeployApi.Plans.getCurrentlyViewed()
         })
         .then(function(plan) {
-          console.log("plan : "+plan.id);
+		  //fetch id of that plan
+          //console.log("plan : "+plan.id);
+		  //return array of link of Tile images based on PlanId
 		  return api.Tiles.get({planId: plan.id, layerName: 'ortho', zoom: 16});
         })
 		.then(function(tileResponse){
-			console.log("data "+tileResponse.tiles);
+			//console.log("tiles data "+tileResponse.tiles);
 			return tileResponse.tiles;
 		})
 		.then(function(tiles){
+			//custom web server
 			const webServerUrl = 'https://dronedeploy-app-server-purva.herokuapp.com/getEncodedUrl/';
 			  const body = JSON.stringify({
 				'tile': tiles
 			  });
-			  console.log("body "+body)
+			  //console.log("body "+body)
 			  return fetch(webServerUrl, {
 				method: 'POST',
 				body: body
@@ -38,7 +43,7 @@ function generatePDFcontent(list) {
   let content = [{ text: 'PDF generated from DroneDeploy app made by Purva Patel', style: 'header' }];
   const contentStyle = {
     header: {
-      fontSize: 14,
+      fontSize: 16,
       bold: true
     }
   };
